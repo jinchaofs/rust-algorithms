@@ -1,3 +1,4 @@
+// 确定性有限自动机
 use std::{cell::Cell, num::IntErrorKind};
 
 /// 字符串转换整数 (atoi)
@@ -30,7 +31,6 @@ impl Atoi {
     pub fn parse(&self) -> i32 {
         let mut result = String::new();
         for c in self.source.chars() {
-            println!("{}", c);
             self.process_input(c, &mut result);
         }
         let num = result.parse::<i32>();
