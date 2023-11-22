@@ -1,2 +1,2 @@
 pub mod atoi;
-pub mod lexer_scanner;
+pub mod interpret;
