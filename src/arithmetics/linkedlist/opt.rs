@@ -1,4 +1,4 @@
-use std::{borrow::BorrowMut, mem};
+use std::cmp::Ordering;
 
 use super::list_node::ListNode;
 
@@ -149,6 +149,51 @@ pub fn find_nth_from_end_v2(
     slow.clone()
 }
 
+pub fn merge(
+    l1: Option<Box<ListNode<i32>>>,
+    l2: Option<Box<ListNode<i32>>>,
+) -> Option<Box<ListNode<i32>>> {
+    let mut l1 = l1;
+    let mut l2 = l2;
+
+    let mut dummy = Box::new(ListNode::new(0));
+    let mut current = &mut dummy;
+
+    let (mut l1, mut l2) = (&mut l1, &mut l2);
+
+    while let (Some(node1), Some(node2)) = (&mut l1, &mut l2) {
+        match node1.val.cmp(&node2.val) {
+            Ordering::Less => {
+                current.next = Some(Box::new(ListNode::new(node1.val)));
+                current = current.next.as_mut().unwrap();
+                l1 = &mut l1.as_mut()?.next;
+            }
+            Ordering::Greater => {
+                current.next = Some(Box::new(ListNode::new(node2.val)));
+                current = current.next.as_mut().unwrap();
+                l2 = &mut l2.as_mut()?.next;
+            }
+            Ordering::Equal => {
+                current.next = Some(Box::new(ListNode::new(node1.val)));
+                current = current.next.as_mut().unwrap();
+                current.next = Some(Box::new(ListNode::new(node2.val)));
+                current = current.next.as_mut().unwrap();
+                l1 = &mut l1.as_mut()?.next;
+                l2 = &mut l2.as_mut()?.next;
+            }
+        }
+    }
+
+    if let Some(node) = l1.take() {
+        current.next = Some(node);
+    }
+    if let Some(node) = l2.take() {
+        current.next = Some(node);
+    }
+
+    dummy.next
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -195,6 +240,17 @@ mod tests {
         assert_eq!(
             find_nth_from_end_v2(linkedlist, 2),
             ListNode::from_list(vec![3, 4])
+        );
+    }
+
+    #[test]
+    fn test_merge() {
+        assert_eq!(
+            merge(
+                ListNode::from_list(vec![1, 2]),
+                ListNode::from_list(vec![3])
+            ),
+            ListNode::from_list(vec![1, 2, 3])
         );
     }
 }
