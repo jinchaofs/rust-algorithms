@@ -1,9 +1,11 @@
 use std::fmt::Debug;
 
+pub type Link<T> = Option<Box<ListNode<T>>>;
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct ListNode<T> {
     pub val: T,
-    pub next: Option<Box<ListNode<T>>>,
+    pub next: Link<T>,
 }
 
 impl<T> ListNode<T>
